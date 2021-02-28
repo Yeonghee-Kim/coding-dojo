@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favorite Book</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container m-5 w-75 mx-auto">
+    <div class="header d-flex justify-content-between align-items-center border-bottom border-dark">
+      <h1 class="my-3">Welcome, {{user.first_name}}!</h1>
+      <div class="link">
+        <a href="/user_page" class="mx-5">My favorite books</a>
+        <a href="/logout">Log Out</a>
+      </div>
+    </div>
+
+    <div class="main d-flex m-3">
+      <form class="book_detail pr-5" method="post" action="/update_delete/{{ book.id }}">
+        {% csrf_token %}
+        <input class="form-control input-lg w-50 py-3" type="text" name="title" value="{{ book.title }}">
+        <h5 class="py-2">Added by: {{ book.uploaded_by.first_name }} {{ book.uploaded_by.last_name }}</h5>
+        <h5 class="pb-2">Added on: {{ book.created_at }}</h5>
+        <h5 class="pb-2">Last updated on: {{ book.updated_at }}</h5>
+        <div class="desc d-flex">
+          <h5 class="pb-2">Description:</h5>
+          <textarea name="desc" id="desc" cols="30" rows="5" class="mx-3 form-control">{{ book.desc }}</textarea>
+        </div>
+        {% if user.id == book.uploaded_by.id %}
+          <div class="link d-flex justify-content-end p-2">
+            <button name="update" type="submit" class="btn btn-light btn btn-outline-dark btn-sm mx-2">Update</button>
+            <button name="delete" type="submit" class="btn btn-danger btn btn-outline-dark btn-sm">Delete</button>
+          </div>
+        {% endif %}
+      </form>
+
+      <div class="user_who_like_book">
+        <h2 class="px-5 mb-3 pb-3">Users Who Like This Book:</h2>
+        <ul class="px-5 mx-5">
+          {% for user in users_who_like %}
+            <li>{{ user.first_name }} {{ user.last_name }} {% if user.id == request.session.user_id %}
+              <a href="/un_fav/{{ book.id }}" class="mx-3">Un-Favorite</a>
+            {% endif %}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
